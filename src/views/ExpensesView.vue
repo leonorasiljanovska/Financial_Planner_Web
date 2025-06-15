@@ -75,7 +75,7 @@ export default {
       usernameRow.getCell(2).alignment = { horizontal: 'right' };
       sheet.addRow(['Приход', income]);
       const savingsRow = sheet.addRow(['Заштеда (15%)', savings.toFixed(2)]);
-      savingsRow.getCell(2).alignment = { horizontal: 'right' }; // 👉 Align savings amount to the right
+      savingsRow.getCell(2).alignment = { horizontal: 'right' };
 
 
       sheet.addRow([]); // Empty row
