@@ -1,5 +1,6 @@
-# financial-planner
+Personal Financial Planner
 
+Made by: Leonora Siljanovska 221115
 ## Project setup
 ```
 npm install
