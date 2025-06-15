@@ -13,9 +13,14 @@
 
 <script>
 export default {
+  data() {
+    return {
+      loggedInUser: localStorage.getItem('loggedInUser')
+    };
+  },
   computed: {
     isLoggedIn() {
-      return !!localStorage.getItem('loggedInUser');
+      return !!this.loggedInUser;
     },
     filteredLinks() {
       const links = [
@@ -34,11 +39,21 @@ export default {
   methods: {
     logout() {
       localStorage.removeItem('loggedInUser');
+      this.loggedInUser = null; // update reactive property
       this.$router.push('/login');
     }
+  },
+  created() {
+    // Optional: listen to storage changes from other tabs/windows
+    window.addEventListener('storage', e => {
+      if (e.key === 'loggedInUser') {
+        this.loggedInUser = e.newValue;
+      }
+    });
   }
 };
 </script>
+
 
 <style lang="scss">
 #app {
@@ -56,6 +71,7 @@ nav {
     font-weight: bold;
     color: #2c3e50;
     text-decoration: none;
+
 
     &.router-link-exact-active {
       color: #42b983;

@@ -57,55 +57,59 @@ export default {
       this.$router.push('/login');
     },
      async exportToExcel() {
-  const username = localStorage.getItem('loggedInUser');
-  if (!username) {
-    alert('User not logged in.');
-    return;
-  }
+      const username = localStorage.getItem('loggedInUser');
+      if (!username) {
+        alert('User not logged in.');
+        return;
+      }
 
-  const income = parseFloat(localStorage.getItem(`income_${username}`)) || 0;
-  const savings = income * 0.15;
-  const expenses = JSON.parse(localStorage.getItem(`expenses_${username}`)) || [];
+      const income = parseFloat(localStorage.getItem(`income_${username}`)) || 0;
+      const savings = income * 0.15;
+      const expenses = JSON.parse(localStorage.getItem(`expenses_${username}`)) || [];
 
-  const workbook = new ExcelJS.Workbook();
-  const sheet = workbook.addWorksheet('Финансии');
+      const workbook = new ExcelJS.Workbook();
+      const sheet = workbook.addWorksheet('Финансии');
 
-  // Top user info rows
-  sheet.addRow(['Корисничко име', username]);
-  sheet.addRow(['Приход', income]);
-  sheet.addRow(['Заштеда (15%)', savings.toFixed(2)]);
-  sheet.addRow([]); // Empty row
+      // Top user info rows
+      const usernameRow = sheet.addRow(['Корисничко име', username]);
+      usernameRow.getCell(2).alignment = { horizontal: 'right' };
+      sheet.addRow(['Приход', income]);
+      const savingsRow = sheet.addRow(['Заштеда (15%)', savings.toFixed(2)]);
+      savingsRow.getCell(2).alignment = { horizontal: 'right' }; // 👉 Align savings amount to the right
 
-  // Expense headers
-  const headerRow = sheet.addRow(['Категорија', 'Име на трошок', 'Цена на трошок', 'Датум на трошок']);
-  headerRow.eachCell(cell => {
-    cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-    cell.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'FF2E86C1' } // Blue
-    };
-    cell.alignment = { horizontal: 'center' };
-    cell.border = {
-      top: { style: 'thin' },
-      bottom: { style: 'thin' },
-      left: { style: 'thin' },
-      right: { style: 'thin' }
-    };
-  });
 
-  // Add expenses
-  expenses.forEach(exp => {
-    const row = sheet.addRow([
-      exp.category,
-      exp.name,
-      parseFloat(exp.amount),
-      exp.date
-    ]);
-    row.getCell(3).alignment = { horizontal: 'right' }; // Align amount right
-    row.getCell(1).alignment = { horizontal: 'left' };
-    row.getCell(2).alignment = { horizontal: 'left' };
-    row.getCell(4).alignment = { horizontal: 'center' };
+      sheet.addRow([]); // Empty row
+
+      // Expense headers
+      const headerRow = sheet.addRow(['Категорија', 'Име на трошок', 'Цена на трошок', 'Датум на трошок']);
+      headerRow.eachCell(cell => {
+        cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FF2E86C1' } // Blue
+        };
+        cell.alignment = { horizontal: 'center' };
+        cell.border = {
+          top: { style: 'thin' },
+          bottom: { style: 'thin' },
+          left: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+      });
+
+    // Add expenses
+    expenses.forEach(exp => {
+      const row = sheet.addRow([
+        exp.category,
+        exp.name,
+        parseFloat(exp.amount),
+        exp.date
+      ]);
+      row.getCell(3).alignment = { horizontal: 'right' }; // Align amount right
+      row.getCell(1).alignment = { horizontal: 'left' };
+      row.getCell(2).alignment = { horizontal: 'left' };
+      row.getCell(4).alignment = { horizontal: 'center' };
   });
 
   // Auto-fit columns
